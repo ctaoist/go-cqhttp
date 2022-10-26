@@ -17,8 +17,12 @@ type (
 		GetMessageByGlobalID(int32) (StoredMessage, error)
 		// GetGroupMessageByGlobalID 通过 GlobalID 来获取群消息
 		GetGroupMessageByGlobalID(int32) (*StoredGroupMessage, error)
+		// GetGroupMessagesByTime 获取 targetId Time 之前 Size 条群消息
+		GetGroupMessagesByTime(int64, int64, int64) ([]*StoredGroupMessage, error)
 		// GetPrivateMessageByGlobalID 通过 GlobalID 来获取私聊消息
 		GetPrivateMessageByGlobalID(int32) (*StoredPrivateMessage, error)
+		// GetPrivateMessagesByTime 获取 targetId Time 之前的 Size 条私聊消息
+		GetPrivateMessagesByTime(int64, int64, int64) ([]*StoredPrivateMessage, error)
 		// GetGuildChannelMessageByID 通过 ID 来获取频道消息
 		GetGuildChannelMessageByID(string) (*StoredGuildChannelMessage, error)
 

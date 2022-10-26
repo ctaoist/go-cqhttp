@@ -175,6 +175,11 @@ func (c *Caller) call(action string, p Getter) global.MSG {
 	case "get_msg":
 		p0 := int32(p.Get("message_id").Int())
 		return c.bot.CQGetMessage(p0)
+	case "get_msg_history":
+		p0 := p.Get("target_id").Int()
+		p1 := int32(p.Get("message_id").Int())
+		p2 := p.Get("group").Bool()
+		return c.bot.CQGetMessageHistory(p0, p1, p2)
 	case "get_online_clients":
 		p0 := p.Get("no_cache").Bool()
 		return c.bot.CQGetOnlineClients(p0)

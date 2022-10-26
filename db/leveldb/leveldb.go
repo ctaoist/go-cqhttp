@@ -81,6 +81,10 @@ func (ldb *database) GetGroupMessageByGlobalID(id int32) (*db.StoredGroupMessage
 	return g, nil
 }
 
+func (ldb *database) GetGroupMessagesByTime(targetId, time, size int64) ([]*db.StoredGroupMessage, error) {
+	return []*db.StoredGroupMessage{}, nil
+}
+
 func (ldb *database) GetPrivateMessageByGlobalID(id int32) (*db.StoredPrivateMessage, error) {
 	i, err := ldb.GetMessageByGlobalID(id)
 	if err != nil {
@@ -91,6 +95,10 @@ func (ldb *database) GetPrivateMessageByGlobalID(id int32) (*db.StoredPrivateMes
 		return nil, errors.New("message type error")
 	}
 	return p, nil
+}
+
+func (ldb *database) GetPrivateMessagesByTime(targetId, time, size int64) ([]*db.StoredPrivateMessage, error) {
+	return []*db.StoredPrivateMessage{}, nil
 }
 
 func (ldb *database) GetGuildChannelMessageByID(id string) (*db.StoredGuildChannelMessage, error) {

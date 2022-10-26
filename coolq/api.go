@@ -1673,6 +1673,42 @@ func (bot *CQBot) CQGetMessage(messageID int32) global.MSG {
 	return OK(m)
 }
 
+// CQGetMessageHistory 获取数据库中的历史消息
+// @route(get_msg_history)
+func (bot *CQBot) CQGetMessageHistory(targetID int64, messageID int32, group bool) global.MSG {
+	mTime, ms := int64(0), make([]*global.MSG, 0, 20)
+	var err any
+	if messageID != 0 {
+		msg, err := db.GetMessageByGlobalID(messageID)
+		if err != nil {
+			log.Warnf("获取消息时出现错误: %v", err)
+			return Failed(100, "MSG_NOT_FOUND", "消息不存在")
+		}
+		mTime = msg.GetAttribute().Timestamp
+	} else {
+		mTime = time.Now().Unix()
+	}
+	if group {
+		var temp []*db.StoredGroupMessage
+		temp, err = db.GetGroupMessagesByTime(targetID, mTime, 20) // 一次性获取 20 条
+		for _, v := range temp {
+			ms = append(ms, bot.formatStoredMessage(v))
+		}
+	} else {
+		var temp []*db.StoredPrivateMessage
+		temp, err = db.GetPrivateMessageByTime(targetID, mTime, 20)
+		for _, v := range temp {
+			ms = append(ms, bot.formatStoredMessage(v))
+		}
+	}
+	if err != nil {
+		log.Warnf("获取历史消息时出现错误: %v", err)
+		return Failed(100, "DB_ERROR", "获取历史消息出现错误")
+	}
+
+	return OK(ms)
+}
+
 // CQGetGuildMessage 获取频道消息
 // @route(get_guild_msg)
 func (bot *CQBot) CQGetGuildMessage(messageID string, noCache bool) global.MSG {

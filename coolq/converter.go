@@ -10,6 +10,7 @@ import (
 	"github.com/Mrs4s/MiraiGo/message"
 	log "github.com/sirupsen/logrus"
 
+	"github.com/Mrs4s/go-cqhttp/db"
 	"github.com/Mrs4s/go-cqhttp/global"
 )
 
@@ -58,6 +59,30 @@ func convertGuildMemberInfo(m []*client.GuildMemberInfo) (r []global.MSG) {
 		})
 	}
 	return
+}
+
+func (bot *CQBot) formatStoredMessage(msg db.StoredMessage) *global.MSG {
+	m := global.MSG{
+		"message_id":    msg.GetGlobalID(),
+		"message_id_v2": msg.GetID(),
+		"message_type":  msg.GetType(),
+		"real_id":       msg.GetAttribute().MessageSeq,
+		"message_seq":   msg.GetAttribute().MessageSeq,
+		"group":         msg.GetType() == "group",
+		"sender": global.MSG{
+			"user_id":  msg.GetAttribute().SenderUin,
+			"nickname": msg.GetAttribute().SenderName,
+		},
+		"time": msg.GetAttribute().Timestamp,
+	}
+	switch o := msg.(type) {
+	case *db.StoredGroupMessage:
+		m["group_id"] = o.GroupCode
+		m["message"] = ToFormattedMessage(bot.ConvertContentMessage(o.Content, message.SourceGroup), message.Source{SourceType: message.SourceGroup, PrimaryID: o.GroupCode})
+	case *db.StoredPrivateMessage:
+		m["message"] = ToFormattedMessage(bot.ConvertContentMessage(o.Content, message.SourcePrivate), message.Source{SourceType: message.SourcePrivate})
+	}
+	return &m
 }
 
 func (bot *CQBot) formatGroupMessage(m *message.GroupMessage) *event {

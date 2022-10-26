@@ -63,11 +63,25 @@ func GetGroupMessageByGlobalID(id int32) (*StoredGroupMessage, error) {
 	return backends[0].GetGroupMessageByGlobalID(id)
 }
 
+func GetGroupMessagesByTime(targetId, time, size int64) ([]*StoredGroupMessage, error) {
+	if len(backends) == 0 {
+		return nil, DatabaseDisabledError
+	}
+	return backends[0].GetGroupMessagesByTime(targetId, time, size)
+}
+
 func GetPrivateMessageByGlobalID(id int32) (*StoredPrivateMessage, error) {
 	if len(backends) == 0 {
 		return nil, DatabaseDisabledError
 	}
 	return backends[0].GetPrivateMessageByGlobalID(id)
+}
+
+func GetPrivateMessageByTime(targetId, time, size int64) ([]*StoredPrivateMessage, error) {
+	if len(backends) == 0 {
+		return nil, DatabaseDisabledError
+	}
+	return backends[0].GetPrivateMessagesByTime(targetId, time, size)
 }
 
 func GetGuildChannelMessageByID(id string) (*StoredGuildChannelMessage, error) {

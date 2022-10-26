@@ -70,6 +70,17 @@ func (m *database) GetGroupMessageByGlobalID(id int32) (*db.StoredGroupMessage, 
 	return &ret, nil
 }
 
+func (m *database) GetGroupMessagesByTime(targetId, time, size int64) ([]*db.StoredGroupMessage, error) {
+	coll := m.mongo.Collection(MongoGroupMessageCollection)
+	ret := make([]*db.StoredGroupMessage, 0, size)
+	if cur, err := coll.Find(context.Background(), bson.D{{"groupCode", targetId}, {"attribute.timestamp", bson.D{{"$lte", time}}}}, options.Find().SetLimit(size).SetSort(bson.D{{"attribute.timestamp", -1}})); err != nil {
+		return ret, errors.Wrap(err, "query error")
+	} else {
+		cur.All(context.Background(), &ret)
+	}
+	return ret, nil
+}
+
 func (m *database) GetPrivateMessageByGlobalID(id int32) (*db.StoredPrivateMessage, error) {
 	coll := m.mongo.Collection(MongoPrivateMessageCollection)
 	var ret db.StoredPrivateMessage
@@ -77,6 +88,17 @@ func (m *database) GetPrivateMessageByGlobalID(id int32) (*db.StoredPrivateMessa
 		return nil, errors.Wrap(err, "query error")
 	}
 	return &ret, nil
+}
+
+func (m *database) GetPrivateMessagesByTime(targetId, time, size int64) ([]*db.StoredPrivateMessage, error) {
+	coll := m.mongo.Collection(MongoPrivateMessageCollection)
+	ret := make([]*db.StoredPrivateMessage, 0, size)
+	if cur, err := coll.Find(context.Background(), bson.D{{"sessionUin", targetId}, {"attribute.timestamp", bson.D{{"$lte", time}}}}, options.Find().SetLimit(size).SetSort(bson.D{{"attribute.timestamp", -1}})); err != nil {
+		return ret, errors.Wrap(err, "query error")
+	} else {
+		cur.All(context.Background(), &ret)
+	}
+	return ret, nil
 }
 
 func (m *database) GetGuildChannelMessageByID(id string) (*db.StoredGuildChannelMessage, error) {
