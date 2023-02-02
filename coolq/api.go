@@ -14,12 +14,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/segmentio/asm/base64"
-
 	"github.com/Mrs4s/MiraiGo/binary"
 	"github.com/Mrs4s/MiraiGo/client"
 	"github.com/Mrs4s/MiraiGo/message"
 	"github.com/Mrs4s/MiraiGo/utils"
+	"github.com/segmentio/asm/base64"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 
@@ -1107,12 +1106,12 @@ func (bot *CQBot) CQSetGroupMemo(groupID int64, msg, img string) global.MSG {
 			if err != nil {
 				return Failed(100, "IMAGE_NOT_FOUND", "图片未找到")
 			}
-			err = bot.Client.AddGroupNoticeWithPic(groupID, msg, data)
+			_, err = bot.Client.AddGroupNoticeWithPic(groupID, msg, data)
 			if err != nil {
 				return Failed(100, "SEND_NOTICE_ERROR", err.Error())
 			}
 		} else {
-			err := bot.Client.AddGroupNoticeSimple(groupID, msg)
+			_, err := bot.Client.AddGroupNoticeSimple(groupID, msg)
 			if err != nil {
 				return Failed(100, "SEND_NOTICE_ERROR", err.Error())
 			}
@@ -1336,6 +1335,19 @@ func (bot *CQBot) CQSetGroupAdmin(groupID, userID int64, enable bool) global.MSG
 	}
 	group.Members = t
 	return OK(nil)
+}
+
+// CQSetGroupAnonymous 群组匿名
+//
+// https://beautyyu.one
+// @route(set_group_anonymous)
+// @default(enable=true)
+func (bot *CQBot) CQSetGroupAnonymous(groupID int64, enable bool) global.MSG {
+	if g := bot.Client.FindGroup(groupID); g != nil {
+		g.SetAnonymous(enable)
+		return OK(nil)
+	}
+	return Failed(100, "GROUP_NOT_FOUND", "群聊不存在")
 }
 
 // CQGetGroupHonorInfo 获取群荣誉信息
@@ -2026,22 +2038,7 @@ func (bot *CQBot) CQGetVersionInfo() global.MSG {
 		"runtime_version":            runtime.Version(),
 		"runtime_os":                 runtime.GOOS,
 		"version":                    base.Version,
-		"protocol": func() int {
-			switch client.SystemDeviceInfo.Protocol {
-			case client.Unset, client.IPad:
-				return 0
-			case client.AndroidPhone:
-				return 1
-			case client.AndroidWatch:
-				return 2
-			case client.MacOS:
-				return 3
-			case client.QiDian:
-				return 4
-			default:
-				return -1
-			}
-		}(),
+		"protocol_name":              client.SystemDeviceInfo.Protocol,
 	})
 }
 
@@ -2135,7 +2132,7 @@ func (bot *CQBot) CQReloadEventFilter(file string) global.MSG {
 }
 
 // OK 生成成功返回值
-func OK(data interface{}) global.MSG {
+func OK(data any) global.MSG {
 	return global.MSG{"data": data, "retcode": 0, "status": "ok"}
 }
 

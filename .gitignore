@@ -14,3 +14,5 @@ internal/btree/*.db
 go-cqhttp
 qrcode.png
 cmd/api-generator/*
+# macos
+.DS_Store
