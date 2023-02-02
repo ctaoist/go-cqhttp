@@ -428,6 +428,9 @@ func (bot *CQBot) SendGuildChannelMessage(guildID, channelID uint64, m *message.
 
 // InsertGroupMessage 群聊消息入数据库
 func (bot *CQBot) InsertGroupMessage(m *message.GroupMessage) int32 {
+	if !base.CacheGroup {
+		return -1
+	}
 	t := &message.SendingMessage{Elements: m.Elements}
 	replyElem := t.FirstOrNil(func(e message.IMessageElement) bool {
 		_, ok := e.(*message.ReplyElement)
@@ -471,6 +474,9 @@ func (bot *CQBot) InsertGroupMessage(m *message.GroupMessage) int32 {
 
 // InsertPrivateMessage 私聊消息入数据库
 func (bot *CQBot) InsertPrivateMessage(m *message.PrivateMessage) int32 {
+	if !base.CachePrivate {
+		return -1
+	}
 	t := &message.SendingMessage{Elements: m.Elements}
 	replyElem := t.FirstOrNil(func(e message.IMessageElement) bool {
 		_, ok := e.(*message.ReplyElement)

@@ -36,6 +36,8 @@ var (
 	ForceFragmented     bool // 是否启用强制分片
 	SkipMimeScan        bool // 是否跳过Mime扫描
 	ReportSelfMessage   bool // 是否上报自身消息
+	CachePrivate        bool // 是否入库私聊消息
+	CacheGroup          bool // 是否入库群消息
 	UseSSOAddress       bool // 是否使用服务器下发的新地址进行重连
 	LogForceNew         bool // 是否在每次启动时强制创建全新的文件储存日志
 	LogColorful         bool // 是否启用日志颜色
@@ -87,6 +89,8 @@ func Init() {
 		ForceFragmented = conf.Message.ForceFragment
 		SkipMimeScan = conf.Message.SkipMimeScan
 		ReportSelfMessage = conf.Message.ReportSelfMessage
+		CachePrivate = conf.Message.CachePrivate
+		CacheGroup = conf.Message.CacheGroup
 		UseSSOAddress = conf.Account.UseSSOAddress
 		AllowTempSession = conf.Account.AllowTempSession
 	}

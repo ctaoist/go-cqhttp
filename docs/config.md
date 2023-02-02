@@ -52,6 +52,10 @@ message:
   extra-reply-data: false
   # 跳过 Mime 扫描, 忽略错误数据
   skip-mime-scan: false
+  # 是否入库私聊消息
+  cache-private: true
+  # 是否入库群消息
+  cache-group: true
 
 output:
   # 日志等级 trace,debug,info,warn,error
