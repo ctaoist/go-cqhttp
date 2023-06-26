@@ -14,5 +14,10 @@ internal/btree/*.db
 go-cqhttp
 qrcode.png
 cmd/api-generator/*
+*.exe
+
 # macos
 .DS_Store
+
+# windwos rc
+*.syso

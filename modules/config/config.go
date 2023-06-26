@@ -58,6 +58,7 @@ type Config struct {
 		ConvertWebpImage    bool   `yaml:"convert-webp-image"`
 		CachePrivate        bool   `yaml:"cache-private"`
 		CacheGroup          bool   `yaml:"cache-group"`
+		HTTPTimeout         int    `yaml:"http-timeout"`
 	} `yaml:"message"`
 
 	Output struct {
